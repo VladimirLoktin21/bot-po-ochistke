@@ -1,0 +1,50 @@
+import os
+import random
+import discord
+from discord.ext import commands
+
+intents = discord.Intents.default()
+intents.message_content = True
+
+bot = commands.Bot(command_prefix='$', intents=intents)
+
+@bot.event
+async def on_ready():
+    print(f'Logged in as {bot.user.name} - {bot.user.id}')
+    print('------')
+
+@bot.command()
+async def hello(ctx):
+    await ctx.send(f'Hello, {ctx.author.mention}!')
+
+@bot.command()
+async def recycling_info(ctx):
+    recycling_message = (
+        "Переработка отходов - это важная практика, которая помогает сократить количество отходов в нашем мире. "
+        "Это включает в себя сбор и обработку материалов, которые в противном случае были бы выброшены как мусор, "
+        "такие как бумага, стекло, пластик и металл, и превращены в новые продукты. "
+        "Вторичная переработка позволяет экономить природные ресурсы, снижает потребление энергии и сводит к минимуму "
+        "воздействие утилизации отходов на окружающую среду. "
+        "Перерабатывая отходы, мы можем внести свой вклад в более устойчивое и экологичное будущее нашей планеты. Каждое маленькое усилие имеет значение!"
+    )
+    await ctx.send(recycling_message)
+
+@bot.command()
+async def recycled_items(ctx):
+    items_list = [
+        "Переработанная бумага: новые газеты, картон и офисная бумага",
+        "Переработанное стекло: новые стеклянные бутылки и банки",
+        "Переработанный пластик: новые пластиковые бутылки, контейнеры и одежда",
+        "Переработанный металл: новые алюминиевые банки и изделия из стали",
+        "Переработанная электроника: новые электронные устройства и компоненты",
+        "Переработанные шины: прорезиненный асфальт, покрытия для детских площадок и многое другое!"
+    ]
+    
+    items_message = "Из переработанных материалов можно получить следующие предметы:\n"
+    items_message += "\n".join([f"- {item}" for item in items_list])
+
+    await ctx.send(items_message)
+
+
+bot.run('MTE0NDk2MDA4OTk1OTE5MDY2OA.GPkjTx.gHFfIJ8rVTiKhDckmk5u5ziGj5y-VGjFUsledo')
+

@@ -12,10 +12,29 @@ bot = commands.Bot(command_prefix='$', intents=intents)
 async def on_ready():
     print(f'Logged in as {bot.user.name} - {bot.user.id}')
     print('------')
+    
+
+    available_commands = [
+        "1. `$hello`: Say hello to the bot.",
+        "2. `$recycling_info`: Learn about waste recycling and its importance.",
+        "3. `$recycled_items`: Discover what items can be made from recycled materials.",
+        "4. `$what_i_need_to_save_world`: Find out how you can contribute to a cleaner world.",
+    ]
+    
+
+    welcome_message = (
+        f"Hello! I'm your recycling bot. Here are some of the commands you can use:\n"
+        "\n".join(available_commands)
+    )
+
+    for guild in bot.guilds:
+        default_channel = guild.text_channels[0]
+        await default_channel.send(welcome_message)
 
 @bot.command()
 async def hello(ctx):
-    await ctx.send(f'Hello, {ctx.author.mention}!')
+    greeting_message = "Привет! Я могу помочь вам с информацией о переработке отходов."
+    await ctx.send(greeting_message)
 
 @bot.command()
 async def recycling_info(ctx):
@@ -45,6 +64,16 @@ async def recycled_items(ctx):
 
     await ctx.send(items_message)
 
+@bot.command()
+async def what_i_need_to_save_world(ctx):
+    cleanup_message = (
+        "Чтобы спасти мир, вы можете:\n"
+        "1. Сортировать отходы и участвовать в программе переработки.\n"
+        "2. Меньше использовать одноразовые пластиковые изделия.\n"
+        "3. Поддерживать и участвовать в мероприятиях по уборке мусора в вашем районе.\n"
+        "4. Экономить воду и энергию в повседневной жизни.\n"
+        "5. Распространять информацию о важности охраны окружающей среды."
+    )
+    await ctx.send(cleanup_message)
 
-bot.run('MTE0NDk2MDA4OTk1OTE5MDY2OA.GPkjTx.gHFfIJ8rVTiKhDckmk5u5ziGj5y-VGjFUsledo')
-
+bot.run('MTE0NDk2MDA4OTk1OTE5MDY2OA.GdEE61.nRS8uCUaMcsxTrWk2qXLX5WGp3v_BLOIKzNUIQ')

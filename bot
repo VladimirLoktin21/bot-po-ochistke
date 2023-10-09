@@ -1,79 +1,82 @@
-import os
+PYTHON:
+from flask import Flask, render_template
 import random
-import discord
-from discord.ext import commands
+import string
 
-intents = discord.Intents.default()
-intents.message_content = True
+app = Flask(__name__)
 
-bot = commands.Bot(command_prefix='$', intents=intents)
 
-@bot.event
-async def on_ready():
-    print(f'Logged in as {bot.user.name} - {bot.user.id}')
-    print('------')
-    
+facts_list = [
+    "Cats have five toes on their front paws, but only four on their back paws.",
+    "The Eiffel Tower can be 15 cm taller during the summer, due to the expansion of the iron.",
+    "Bananas are berries, but strawberries aren't.",
+    "A group of flamingos is called a 'flamboyance'.",
+    "The shortest war in history was between Britain and Zanzibar on August 27, 1896. Zanzibar surrendered after 38 minutes.",
+]
 
-    available_commands = [
-        "1. `$hello`: Say hello to the bot.",
-        "2. `$recycling_info`: Learn about waste recycling and its importance.",
-        "3. `$recycled_items`: Discover what items can be made from recycled materials.",
-        "4. `$what_i_need_to_save_world`: Find out how you can contribute to a cleaner world.",
-    ]
-    
+@app.route("/")
+def home():
+    return render_template('index.html', fact=random.choice(facts_list))
 
-    welcome_message = (
-        f"Hello! I'm your recycling bot. Here are some of the commands you can use:\n"
-        "\n".join(available_commands)
-    )
+@app.route("/random_fact")
+def random_fact():
+    return render_template('random_fact.html', fact=random.choice(facts_list))
 
-    for guild in bot.guilds:
-        default_channel = guild.text_channels[0]
-        await default_channel.send(welcome_message)
+@app.route("/coin_flip")
+def coin_flip():
+    result = "Heads" if random.choice([True, False]) else "Tails"
+    return render_template('coin_flip.html', result=result)
 
-@bot.command()
-async def hello(ctx):
-    greeting_message = "Привет! Я могу помочь вам с информацией о переработке отходов."
-    await ctx.send(greeting_message)
+@app.route("/password_generator")
+def password_generator():
+    # Generate a random password of length 12
+    password = ''.join(random.choices(string.ascii_letters + string.digits + string.punctuation, k=12))
+    return render_template('password_generator.html', password=password)
 
-@bot.command()
-async def recycling_info(ctx):
-    recycling_message = (
-        "Переработка отходов - это важная практика, которая помогает сократить количество отходов в нашем мире. "
-        "Это включает в себя сбор и обработку материалов, которые в противном случае были бы выброшены как мусор, "
-        "такие как бумага, стекло, пластик и металл, и превращены в новые продукты. "
-        "Вторичная переработка позволяет экономить природные ресурсы, снижает потребление энергии и сводит к минимуму "
-        "воздействие утилизации отходов на окружающую среду. "
-        "Перерабатывая отходы, мы можем внести свой вклад в более устойчивое и экологичное будущее нашей планеты. Каждое маленькое усилие имеет значение!"
-    )
-    await ctx.send(recycling_message)
+if __name__ == "__main__":
+    app.run(debug=True)
 
-@bot.command()
-async def recycled_items(ctx):
-    items_list = [
-        "Переработанная бумага: новые газеты, картон и офисная бумага",
-        "Переработанное стекло: новые стеклянные бутылки и банки",
-        "Переработанный пластик: новые пластиковые бутылки, контейнеры и одежда",
-        "Переработанный металл: новые алюминиевые банки и изделия из стали",
-        "Переработанная электроника: новые электронные устройства и компоненты",
-        "Переработанные шины: прорезиненный асфальт, покрытия для детских площадок и многое другое!"
-    ]
-    
-    items_message = "Из переработанных материалов можно получить следующие предметы:\n"
-    items_message += "\n".join([f"- {item}" for item in items_list])
+INDEX.HTML
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+</head>
+<body>
+    <p>{{ fact }}</p>
+    <br>
+    <a href="/random_fact">Посмотреть случайный факт!</a>
+</body>
+</html>
 
-    await ctx.send(items_message)
+PASSWORD-GENERATOR.TML
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Password Generator</title>
+</head>
+<body>
+    <p>Your generated password is: {{ password }}</p>
+    <br>
+    <a href="/">Back to Home</a>
+</body>
+</html>
 
-@bot.command()
-async def what_i_need_to_save_world(ctx):
-    cleanup_message = (
-        "Чтобы спасти мир, вы можете:\n"
-        "1. Сортировать отходы и участвовать в программе переработки.\n"
-        "2. Меньше использовать одноразовые пластиковые изделия.\n"
-        "3. Поддерживать и участвовать в мероприятиях по уборке мусора в вашем районе.\n"
-        "4. Экономить воду и энергию в повседневной жизни.\n"
-        "5. Распространять информацию о важности охраны окружающей среды."
-    )
-    await ctx.send(cleanup_message)
-
-bot.run('MTE0NDk2MDA4OTk1OTE5MDY2OA.GdEE61.nRS8uCUaMcsxTrWk2qXLX5WGp3v_BLOIKzNUIQ')
+RANDOM_FACT.HTML
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Random Fact</title>
+</head>
+<body>
+    <p>{{ fact }}</p>
+    <br>
+    <a href="/">Вернуться на главную</a>
+</body>
+</html>
